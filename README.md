@@ -7,7 +7,7 @@ Created by **Nirmit Singh (36614812724)** as part of my Summer Internship projec
 ## Features
 
 - **Classic Wordle gameplay** — guess a hidden 5-letter word in 6 tries, with color-coded feedback (🟩 correct, 🟨 present, ⬛ absent)
-- **5-minute timer**** per round, with visual warnings as time runs low
+- **5-minute timer** per round, with visual warnings as time runs low
 - **Light / dark mode** toggle, saved across sessions
 - **User accounts** — sign up and log in with a username and password
 - **Persistent streak tracking** — current streak, best streak, games played, and win % saved to your profile
@@ -23,7 +23,7 @@ Created by **Nirmit Singh (36614812724)** as part of my Summer Internship projec
 - **Auth & Database:** [Supabase](https://supabase.com/) (Auth + Postgres)
 - **Fonts:** Google Fonts (Fredoka, Poppins, Outfit)
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 ├── index.html      # Markup and modal structure
@@ -36,7 +36,7 @@ Created by **Nirmit Singh (36614812724)** as part of my Summer Internship projec
 
 1. Clone the repo:
 ```bash
-   git clone https://github.com/nirmitts/the-better-wordle-final.git
+   git clone https://github.com/nirmitts/the_better_wordle_final.git
 ```
 2. Open `index.html` in a browser, or serve it locally (e.g. with the VS Code "Live Server" extension) — no build step required.
 
