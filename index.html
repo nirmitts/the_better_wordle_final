@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+    <head>
+        <title>Wordle</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Edu+QLD+Beginner:wght@400..700&family=Outfit:wght@100..900&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital@1&family=Special+Elite&display=swap" rel="stylesheet">
+
+        <link rel="stylesheet" href="wordle.css">
+
+        <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+        <script src="wordle.js"></script>
+    </head>
+
+    <body>
+        <div id="particles"></div>
+        <canvas id="confettiCanvas"></canvas>
+        
+        <div id="controlsRight">
+            <button id="howToPlayBtn">HOW TO PLAY ❓</button>
+            <div id="controlsRightRow">
+                <button id="hintBtn">HINT 💡</button>
+                <div id="timer">05:00</div>
+            </div>
+        </div>
+
+        <div id="controlsLeft">
+            <button id="loginBtn">LOGIN 👤</button>
+            <div id="controlsLeftRow">
+                <button id="themeToggle">🌙</button>
+                <div id="streakWrapper" style="display:none;">
+                    <button id="streakBtn">🔥  <span id="streakCount">0</span></button>
+                    <div id="streakTooltip">
+                        <div class="streak-row"><span>🔥 Current Streak</span><strong id="tooltipCurrent">0</strong></div>
+                        <div class="streak-row"><span>🏆 Your Best</span><strong id="tooltipBest">0</strong></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h1 id="heading">
+        <div class="subtitle">the better</div>
+        <div class="wordle-title">
+            <span style="color:#1b4332">W</span><span style="color:#2d6a4f">O</span><span style="color:#40916c">R</span><span style="color:#52b788">D</span><span style="color:#74c69d">L</span><span style="color:#95d5b2">E</span>
+            </span> 
+        </div> 
+        </h1>
+        <hr>
+
+        <div id="howToPlayModal" class="modal-overlay">
+            <div class="modal-box">
+                <button id="closeHowToPlay" class="modal-close">✕</button>
+                <h3>How to Play?</h3>
+                <ul>
+                    <li>Guess the hidden 5-letter word in 6 tries.</li>
+                    <li>Type a valid 5-letter word and press Enter to submit a guess.</li>
+                    <li>🟩 Green = Correct letter, Correct spot.</li>
+                    <li>🟨 Yellow = Correct letter, Wrong spot.</li>
+                    <li>⬛ Grey = Letter NOT in the word.</li>
+                    <li>You have 5 minutes ⏱️ on the clock. If it hits zero, the game ends and the word is revealed.</li>
+                    <li>Stuck? Use Hint 💡 to reveal a letter- you get 2 hints per game.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div id="resultModal" class="modal-overlay">
+            <div class="result-box">
+                <h2 id="resultTitle">Result</h2>
+                <p id="resultMessage"></p>
+                <div id="resultAnswerBox">
+                    <span class="answer-label">THE WORD WAS</span>
+                    <span id="resultAnswer"></span>
+                </div>
+                <div id="streakInfo" style="display:none; margin: 18px 0 8px;">
+                    <div class="result-streak-grid">
+                        <div class="result-streak-cell">
+                            <span class="result-streak-label">🔥 STREAK</span>
+                            <strong class="result-streak-value" id="streakInfoCurrent">0</strong>
+                        </div>
+                        <div class="result-streak-cell">
+                            <span class="result-streak-label">🏆 BEST</span>
+                            <strong class="result-streak-value" id="streakInfoBest">0</strong>
+                        </div>
+                    </div>
+                </div>
+                <div id="loginPrompt" style="display:none; margin: 18px 0 8px;">
+                    <button id="loginPromptBtn" class="login-prompt-btn">LOG IN 🔒 to track your streak</button>
+                </div>
+                <div class="result-actions">
+                    <button id="playAgainBtn">Play Again</button>
+                    <button id="closeResultBtn">✕ Close</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Profile Stats Modal (shown after login) -->
+        <div id="profileModal" class="modal-overlay">
+            <div class="modal-box profile-modal-box">
+                <button id="closeProfile" class="modal-close">✕</button>
+                <div class="profile-banner">
+                    <div class="profile-avatar" id="profileAvatar">P</div>
+                    <h3 id="profileUsername">Player</h3>
+                </div>
+                <div class="profile-stats-grid">
+                    <div class="profile-stat">
+                        <span class="profile-stat-value" id="profileStreak">0</span>
+                        <span class="profile-stat-label">🔥 Streak</span>
+                    </div>
+                    <div class="profile-stat">
+                        <span class="profile-stat-value" id="profileBest">0</span>
+                        <span class="profile-stat-label">🏆 Best</span>
+                    </div>
+                    <div class="profile-stat">
+                        <span class="profile-stat-value" id="profilePlayed">0</span>
+                        <span class="profile-stat-label">🎮 Played</span>
+                    </div>
+                    <div class="profile-stat">
+                        <span class="profile-stat-value" id="profileWinPct">0%</span>
+                        <span class="profile-stat-label">✅ Win %</span>
+                    </div>
+                </div>
+                <button id="logoutBtn">Log Out</button>
+            </div>
+        </div>
+
+        <div id="authModal" class="modal-overlay">
+            <div class="modal-box" id="authBox" data-mode="login">
+                <button id="closeAuth" class="modal-close">✕</button>
+
+                <!-- Tab switcher -->
+                <div id="authTabs" style="display:flex; border-radius:8px; overflow:hidden; border:1px solid var(--tile-border); margin-bottom:18px;">
+                    <button class="auth-tab active" id="tabLogin" data-tab="login">Log In</button>
+                    <button class="auth-tab" id="tabRegister" data-tab="register">Register</button>
+                </div>
+
+                <h3 id="authTitle" style="margin-top:0;">Welcome Back</h3>
+
+                <div id="authFields">
+                    <input type="text" id="authUsername" placeholder="Username" autocomplete="username"
+                        style="width:100%; box-sizing:border-box; margin-bottom:10px; padding:10px 12px; border-radius:8px; border:1px solid var(--tile-border); background:var(--bg-color); color:var(--text-color); font-family:'Poppins',sans-serif; font-size:0.95rem;">
+                    <input type="password" id="authPassword" placeholder="Password" autocomplete="current-password"
+                        style="width:100%; box-sizing:border-box; margin-bottom:10px; padding:10px 12px; border-radius:8px; border:1px solid var(--tile-border); background:var(--bg-color); color:var(--text-color); font-family:'Poppins',sans-serif; font-size:0.95rem;">
+                    <input type="password" id="authConfirmPassword" placeholder="Confirm Password" autocomplete="new-password"
+                        style="width:100%; box-sizing:border-box; margin-bottom:10px; padding:10px 12px; border-radius:8px; border:1px solid var(--tile-border); background:var(--bg-color); color:var(--text-color); font-family:'Poppins',sans-serif; font-size:0.95rem;">
+                </div>
+
+                <button id="authSubmit" style="width:100%; padding:11px; background:linear-gradient(to right,#1b4332,#40916c); color:#fff; border:none; border-radius:8px; font-weight:700; cursor:pointer; font-family:'Poppins',sans-serif; font-size:1rem; transition:opacity 0.2s;">Log In</button>
+
+                <p id="authError" style="color:#ff5555; font-size:0.82rem; margin-top:10px; min-height:1.2em;"></p>
+                <p id="authSuccess" style="color:#52b788; font-size:0.82rem; margin-top:4px; min-height:1.2em;"></p>
+            </div>
+        </div>
+
+
+        <br>
+        <div id="board"> </div>             <!-- Game content will be inserted here -->
+
+        <br>
+        <h1 id="answer"></h1>
+        
+        <div id="keyboardContainer"></div>
+
+            <footer>
+            <div class="footer-grid">
+
+            <div class="footer-col">
+                <h3>About</h3>
+                <p class="footer-quote">Created as part of my Summer Internship at Graphketing, The Better Wordle is a modern recreation of the popular word puzzle game. It combines an intuitive user experience with a secure login functionality, making the game more personalized while showcasing both design and development skills.</p>
+                <ul class="footer-links">
+                    <li><a href="https://docs.google.com/document/d/11Su9LIugwsF6MbruZqPR9woYgJBwkMs-3Sh1kYEtlHU/preview?tab=t.0" target="_blank">📊 Internship Training Report</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+            <h3>Feedback</h3>
+            <form action="https://formspree.io/f/mgogvelz" method="POST" class="footer-form">
+                <select name="type" required>
+                <option value="">Type</option>
+                <option value="bug">Report a bug 🐞</option>
+                <option value="review">Drop a review ⭐</option>
+                </select>
+                <textarea name="message" placeholder="Tell me what's up..." rows="3" required></textarea>
+                <input type="email" name="email" placeholder="Your email (optional)">
+                <button type="submit">Send</button>
+            </form>
+            </div>
+            
+            <div class="footer-col">
+                <h3>Developed by</h3>
+                <p class="footer-roll">
+                    <strong>Nirmit Singh</strong><br>
+                    University Roll No.: 36614812724
+                    </p>
+            
+                    <ul class="footer-links">
+                    <li><a href="https://docs.google.com/document/d/1-Fjt8lz_lNyE9tVcsW3Jv7SSAFYdMEGm2UnEY-waJDM/preview?tab=t.0" target="_blank">📄 Resume</a></li>
+                    <li><a href="https://www.linkedin.com/in/nirmit-singh-27666a334" target="_blank">🔗 LinkedIn</a></li>
+                    <li><a href="mailto:nirmitsingh1540@gmail.com">✉️ Email</a></li>
+                </ul>
+            </div>
+        </div>
+
+            <p class="footer-bottom">
+                Made with 🤍 and a lot of 5-letter words.<br>
+                © 2026 | Nirmit Singh
+            </p>
+        </footer>
+    </body>
+</html>
+
