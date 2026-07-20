@@ -34,6 +34,11 @@ Created by **Nirmit Singh (36614812724)** as part of my Summer Internship projec
 
 ## Getting Started
 
+Deployed at: 
+```
+https://nirmitts.github.io/the_better_wordle_final/
+```
+
 1. Clone the repo:
 ```bash
    git clone https://github.com/nirmitts/the_better_wordle_final.git
